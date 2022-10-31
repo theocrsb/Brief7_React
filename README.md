@@ -44,3 +44,10 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+---
+
+consignes pour routes :
+
+lors d'un clic sur un lien (exemple chuck) amene vers localhost 3000 / details/ id de chuck. ca charge une nouvel page component.
+Ce composent va aller chercher l'id qui est dans l url. Son useEffect va declencher une requete axios vers l'url de mon API en prennat l'id de mon URL React.
