@@ -8,6 +8,7 @@ export interface Hero {
   power: number;
   life: number;
   id_type_weapon: number;
+  message: string;
 }
 
 const Heros = () => {
@@ -22,14 +23,17 @@ const Heros = () => {
       });
   }, []);
   return (
-    <div>
-      <ul className="list-group">
+    <div className="container p-5">
+      <ul className="row">
         {listHero.map((hero: Hero, id) => (
-          <NavLink to={`/about/${hero.id}`}>
-            <li className="list-group-item list-group-item-dark" key={id}>
-              Name : {hero.name}, Life : {hero.life}, Power : {hero.power},
-            </li>
-          </NavLink>
+          <div className="col-4 my-3 " key={id}>
+            <NavLink className="link" to={`/about/${hero.id}`}>
+              <div className="card text-center boxShadow">
+                <h5 className="card-title"> {hero.name} </h5>
+                <p>ID : {hero.id}</p>
+              </div>
+            </NavLink>
+          </div>
         ))}
       </ul>
     </div>

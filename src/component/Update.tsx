@@ -1,39 +1,45 @@
 import { AxiosResponse } from "axios";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Hero } from "./Heros";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
-const Create = () => {
-  const [retour, setRetour] = useState("");
+const Update = () => {
+  const [retourupdate, setRetourupdate] = useState<string>("");
+  const params = useParams();
+  console.log(params.id);
   const heroName = useRef<HTMLInputElement>(null);
   const heroPower = useRef<HTMLInputElement>(null);
   const heroLife = useRef<HTMLInputElement>(null);
 
+  const [oneHeroById, setOneHeroById] = useState<Hero | undefined>();
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/heros/${params.id}`)
+      .then((response: AxiosResponse<{ data: Hero[] }>) => {
+        console.log("Reponse one Hero: ", response.data.data);
+        let myHero = response.data.data[0];
+        setOneHeroById(myHero);
+      });
+  }, []);
   const handleSubmit = () => {
     console.log(heroName.current);
     axios
-      .post<Hero>("http://localhost:8080/api/heros/", {
+      .put<Hero>(`http://localhost:8080/api/heros/${params.id}`, {
         name: heroName.current?.value,
         power: heroPower.current?.value,
         life: heroLife.current?.value,
       })
       .then(function (response) {
-        console.log("reponse" + response.status);
-        if ((response.status = 201)) {
-          console.log(response.data.message);
-          setRetour(response.data.message);
-        }
+        console.log(response);
+        setRetourupdate(response.data.message);
       })
       .catch(function (error) {
-        console.log("error" + error);
-        if ((error.status = 500)) {
-          console.log(error);
-          setRetour(
-            error.code +
-              " : Veuillez saisir un nom en lettre, une puissance en chiffre et des points de vie en chiffre."
-          );
-        }
+        console.log(error);
+        setRetourupdate(
+          error.code +
+            " : Veuillez saisir un nom en lettre, une puissance en chiffre et des points de vie en chiffre."
+        );
       });
   };
   return (
@@ -47,7 +53,7 @@ const Create = () => {
             type="text"
             className="form-control "
             ref={heroName}
-            placeholder="exemple : Bruce Wayne"
+            placeholder={oneHeroById?.name}
             required
           />
         </div>
@@ -60,7 +66,7 @@ const Create = () => {
             type="number"
             className="form-control"
             ref={heroPower}
-            placeholder="100"
+            placeholder={oneHeroById?.power.toString()}
             required
           />
         </div>
@@ -72,25 +78,21 @@ const Create = () => {
             type="number"
             className="form-control"
             ref={heroLife}
-            placeholder="500"
+            placeholder={oneHeroById?.life.toString()}
             required
           />
         </div>
+
         <div className="d-flex justifycenter mb-3">
           <button
             onClick={handleSubmit}
             type="button"
             className="btn btn-secondary btn-lg btn-block"
-            value="Créer ce nouveau Hero"
+            value="Update This Hero"
           >
-            Create New Hero
+            Update
           </button>
         </div>
-        {/* <input
-        type="button"
-        onClick={handleSubmit}
-        value="Créer ce nouveau Hero"
-      /> */}
         <div
           className="text-center"
           style={{
@@ -99,11 +101,11 @@ const Create = () => {
             color: "black",
           }}
         >
-          {retour}
+          {retourupdate}
         </div>
       </div>
     </div>
   );
 };
 
-export default Create;
+export default Update;
